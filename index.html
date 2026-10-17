@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Medtech job search hub</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2733;--mute:#5d6b7a;--line:#d9dee5;--acc:#0b6b8c;--acc2:#e6f2f6;--ok:#2f7d4f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171d;--card:#1a212a;--ink:#e6ebf0;--mute:#9aa8b6;--line:#2c3744;--acc:#5bbbdc;--acc2:#16303a;--ok:#6cc08b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12171d;--card:#1a212a;--ink:#e6ebf0;--mute:#9aa8b6;--line:#2c3744;--acc:#5bbbdc;--acc2:#16303a;--ok:#6cc08b;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Source Sans 3","Segoe UI",system-ui,sans-serif}
+header{padding:28px 20px 12px;max-width:980px;margin:0 auto}
+h1{font-size:1.9rem;margin:0 0 6px;letter-spacing:-.01em}
+header p{margin:0;color:var(--mute);max-width:62ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type=search],input[type=text],select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+input[type=search]{flex:1;min-width:180px}
+button{font:inherit;cursor:pointer;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 12px}
+button:hover{border-color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+main{max-width:980px;margin:0 auto;padding:16px 20px 60px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}
+.chips a{font-size:.88rem;padding:3px 10px;border:1px solid var(--line);border-radius:99px;color:var(--ink);text-decoration:none;background:var(--card)}
+.chips a:hover{border-color:var(--acc);color:var(--acc)}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 16px;padding:14px 16px}
+h2{font-size:1.15rem;margin:0 0 2px}
+.sub{color:var(--mute);font-size:.9rem;margin:0 0 8px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+li:first-child{border-top:0}
+li input{margin-top:5px;accent-color:var(--ok)}
+.t{flex:1;min-width:0}
+.t a{color:var(--acc);font-weight:600;text-decoration:none;overflow-wrap:anywhere}
+.t a:hover{text-decoration:underline}
+.t span{display:block;color:var(--mute);font-size:.88rem}
+li.done .t a{color:var(--mute);text-decoration:line-through}
+.tag{font-size:.78rem;color:var(--acc);background:var(--acc2);border-radius:4px;padding:1px 6px;margin-left:6px;font-weight:400;white-space:nowrap}
+.tracker form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tracker form input[type=text]{flex:1;min-width:130px}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:6px 8px;border-top:1px solid var(--line);font-size:.92rem}
+th{color:var(--mute);font-weight:600;border-top:0}
+.empty{color:var(--mute);font-size:.92rem}
+.note{color:var(--mute);font-size:.85rem;margin-top:24px}
+.ck{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.ck{grid-template-columns:1fr}}
+textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical;min-height:220px}
+.row{display:flex;gap:8px;margin-top:8px}
+.score{font-size:2.2rem;font-weight:700;line-height:1;margin:0}
+.band{color:var(--mute);margin:2px 0 10px}
+#res h3{font-size:.95rem;margin:12px 0 4px}
+.pl{display:flex;flex-wrap:wrap;gap:6px}
+.pl span{font-size:.85rem;border:1px solid var(--acc);color:var(--acc);border-radius:99px;padding:1px 9px}
+.pl.miss span{border:1px dashed var(--mute);color:var(--mute)}
+.flag{font-size:.9rem;margin:4px 0}
+.sum{background:var(--acc2);border-radius:6px;padding:8px 10px;font-size:.92rem;margin:0}
+</style>
+</head>
+<body>
+<header>
+<h1>Medtech job search hub</h1>
+<p>Every site you want to check, grouped by country. Each link opens in a new tab so you can search while signed in. Tick a link once you’ve checked it today; ticks reset tomorrow.</p>
+</header>
+<div class="bar"><div class="bar-in">
+<input type="search" id="q" placeholder="Filter sites or countries" aria-label="Filter sites or countries">
+<button id="reset" type="button">Clear today’s ticks</button>
+<button id="theme" type="button">Light/dark</button>
+</div></div>
+<main>
+<section id="checker"><h2>Match checker</h2><p class="sub">Paste a job description. It runs in your browser and nothing is sent anywhere.</p>
+<div class="ck"><div><textarea id="jd" placeholder="Paste the full job description here" aria-label="Job description"></textarea><div class="row"><button id="go" type="button">Check match</button><button id="clr" type="button">Clear</button></div></div>
+<div id="res" aria-live="polite"><p class="empty">Your score, matched skills, gaps, the CV to use and a summary line appear here.</p></div></div></section>
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+<section class="tracker" id="tracker">
+<h2>Applications</h2>
+<p class="sub">Your own log, saved in this browser only.</p>
+<form id="f">
+<input type="text" id="role" placeholder="Role" required aria-label="Role">
+<input type="text" id="co" placeholder="Company" required aria-label="Company">
+<select id="st" aria-label="Status"><option>Applied</option><option>Recruiter screen</option><option>Interview</option><option>Offer</option><option>Rejected</option></select>
+<button type="submit">Add</button>
+</form>
+<div class="wrap" id="apps"></div>
+</section>
+<p class="note">Filters used: English-language roles, employers that sponsor visas, design control, sustaining and quality roles. Always confirm sponsorship in the job description before applying. Listings change daily, so check that a posting is still open.</p>
+</main>
+<script>
+var KW="medical%20device%20design%20engineer";
+function li(c){return "https://www.linkedin.com/jobs/search/?keywords="+KW+"&location="+encodeURIComponent(c)+"&f_TPR=r604800"}
+var D=[
+{n:"Europe-wide",s:"Portals and employers that cover several countries",l:[
+["EURES job portal","https://eures.europa.eu/index_en","Official EU portal. You can register and save searches as a non-EU jobseeker.","EU"],
+["Philips engineering jobs","https://www.careers.philips.com/professional/global/en/c/engineering-jobs","Design quality roles appear in Best, Netherlands.","Employer"],
+["Medtronic careers (Workday)","https://medtronic.wd1.myworkdayjobs.com/en-US/MedtronicCareers","Filter by country. Heerlen has sustaining and R&D roles.","Employer"],
+["Stryker careers","https://careers.stryker.com/","Orthopaedics. Check Europe locations.","Employer"],
+["Johnson & Johnson careers","https://www.careers.jnj.com/","Orthopaedics (DePuy Synthes) and MedTech.","Employer"],
+["Abbott careers","https://www.jobs.abbott/us/en/","Search by country and function.","Employer"],
+["Terumo BCT careers","https://careers.terumobct.com/","Medical device employer with several sites.","Employer"]]},
+{n:"Finland",l:[["Work in Finland","https://www.workinfinland.com/en/","Government-backed site with English-speaking jobs.","Official"]]},
+{n:"Netherlands",l:[["IND recognised sponsors","https://ind.nl/en/public-register-recognised-sponsors","Check an employer is on the register before applying.","Visa"]]},
+{n:"Norway",l:[]},
+{n:"Sweden",l:[]},
+{n:"Denmark",l:[["EnglishJobs.dk, visa sponsorship","https://englishjobs.dk/jobs/mechanical_engineering?tags=visa-sponsorship","English-language jobs with the visa-sponsorship tag.","Visa"]]},
+{n:"Austria",l:[]},
+{n:"Luxembourg",l:[]},
+{n:"Poland",l:[]},
+{n:"United Kingdom",l:[["UK licensed sponsor register","https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers","Only licensed employers can sponsor a skilled worker visa.","Visa"]]},
+{n:"Belgium",l:[]},
+{n:"Bulgaria",l:[]},
+{n:"Romania",l:[]},
+{n:"Greece",l:[]},
+{n:"Australia",l:[
+["SEEK Australia","https://www.seek.com.au/medical-device-engineer-jobs","Biggest board. Look for sponsorship or visa wording.","Board"],
+["Home Affairs","https://immi.homeaffairs.gov.au/","Official visa information.","Visa"]]},
+{n:"New Zealand",l:[
+["SEEK New Zealand","https://www.seek.co.nz/medical-device-engineer-jobs","Check that the employer is accredited.","Board"],
+["Immigration New Zealand","https://www.immigration.govt.nz/","Official visa and accredited employer information.","Visa"]]},
+{n:"Canada",l:[["Job Bank Canada","https://www.jobbank.gc.ca/","Government board with a filter for jobs open to foreign workers.","Official"]]}
+];
+D.forEach(function(c){if(c.n!=="Europe-wide")c.l.unshift(["LinkedIn: "+c.n+", past week",li(c.n),"Medical device design engineer, newest first.","Search"])});
+var today=new Date().toISOString().slice(0,10);
+function get(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var ticks=get("hub_ticks",{});if(ticks.d!==today){ticks={d:today,t:{}};set("hub_ticks",ticks)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function slug(s){return s.toLowerCase().replace(/[^a-z]+/g,"-")}
+function render(){
+var q=document.getElementById("q").value.toLowerCase(),h="",ch="";
+D.forEach(function(c){
+var rows=c.l.filter(function(x){return !q||(c.n+" "+x[0]+" "+x[2]+" "+x[3]).toLowerCase().indexOf(q)>-1});
+if(!rows.length)return;
+ch+='<a href="#'+slug(c.n)+'">'+esc(c.n)+'</a>';
+h+='<section id="'+slug(c.n)+'"><h2>'+esc(c.n)+'</h2>'+(c.s?'<p class="sub">'+esc(c.s)+'</p>':'')+'<ul>';
+rows.forEach(function(x){var id=x[1],d=ticks.t[id];
+h+='<li class="'+(d?"done":"")+'"><input type="checkbox" data-id="'+esc(id)+'" '+(d?"checked":"")+' aria-label="Checked today"><div class="t"><a href="'+esc(x[1])+'" target="_blank" rel="noopener">'+esc(x[0])+'</a><span class="tag">'+esc(x[3])+'</span><span>'+esc(x[2])+'</span></div></li>'});
+h+='</ul></section>'});
+document.getElementById("chips").innerHTML=ch;
+document.getElementById("list").innerHTML=h||'<p class="empty">No sites match that filter. Clear the box to see everything.</p>'}
+document.getElementById("list").addEventListener("change",function(e){var id=e.target.getAttribute("data-id");if(!id)return;if(e.target.checked)ticks.t[id]=1;else delete ticks.t[id];set("hub_ticks",ticks);e.target.closest("li").classList.toggle("done",e.target.checked)});
+document.getElementById("q").addEventListener("input",render);
+document.getElementById("reset").addEventListener("click",function(){ticks={d:today,t:{}};set("hub_ticks",ticks);render()});
+document.getElementById("theme").addEventListener("click",function(){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark"||(!r.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme: dark)").matches);r.setAttribute("data-theme",dark?"light":"dark")});
+var apps=get("hub_apps",[]);
+function renderApps(){var el=document.getElementById("apps");
+if(!apps.length){el.innerHTML='<p class="empty">Nothing logged yet. Add a role above after you apply.</p>';return}
+el.innerHTML='<table><tr><th>Role</th><th>Company</th><th>Status</th><th>Added</th><th></th></tr>'+apps.map(function(a,i){return '<tr><td>'+esc(a.r)+'</td><td>'+esc(a.c)+'</td><td>'+esc(a.s)+'</td><td>'+esc(a.d)+'</td><td><button type="button" data-del="'+i+'" aria-label="Remove">Remove</button></td></tr>'}).join("")+'</table>'}
+document.getElementById("f").addEventListener("submit",function(e){e.preventDefault();var r=document.getElementById("role"),c=document.getElementById("co");apps.unshift({r:r.value.trim(),c:c.value.trim(),s:document.getElementById("st").value,d:today});set("hub_apps",apps);r.value="";c.value="";renderApps()});
+document.getElementById("apps").addEventListener("click",function(e){var i=e.target.getAttribute("data-del");if(i===null)return;apps.splice(+i,1);set("hub_apps",apps);renderApps()});
+var SK=[
+["Design control",/design control|design history file|\bDHF\b/i,1],
+["Sustaining engineering",/sustaining/i,1],
+["CAPA",/\bCAPA\b|corrective and preventive/i,1],
+["NCR and root cause analysis",/\bNCR\b|non-?conformance|root cause/i,1],
+["Change control (ECN/ECO/DCR)",/\bECN\b|\bECO\b|\bDCR\b|change control|engineering change/i,1],
+["ISO 13485",/13485/i,1],
+["ISO 14971 and risk management",/14971|risk management|risk analysis/i,1],
+["FMEA",/FMEA/i,1],
+["Verification and validation",/verification|validation|\bV&V\b/i,1],
+["FDA 21 CFR 820",/\bFDA\b|21 CFR|\bQSR\b|QMSR/i,1],
+["SolidWorks",/solidworks/i,1],
+["Siemens NX",/siemens nx|\bNX\b/i,1],
+["Creo",/\bcreo\b|pro\/?engineer/i,1],
+["CAD",/\bCAD\b/i,1],
+["Orthopaedic implants",/orthop|implant/i,1],
+["Team leadership",/team lead|lead(ing)? a team|people management|manage(s|ing)? (a )?team/i,1],
+["EU MDR",/\bMDR\b|medical device regulation/i,0],
+["TGA or Medsafe",/\bTGA\b|medsafe/i,0],
+["510(k) or PMA submissions",/510\(k\)|\bPMA\b|regulatory submission/i,0],
+["FEA or simulation",/\bFEA\b|finite element|simulation/i,0],
+["Injection moulding",/injection mou?ld/i,0],
+["PLM (Windchill, Teamcenter)",/windchill|teamcenter|\bPLM\b/i,0],
+["IEC 62304 or 60601",/62304|60601/i,0],
+["Software or firmware",/firmware|embedded|\bC\+\+|software development/i,0],
+["Usability or human factors",/usability|human factors|62366/i,0],
+["Supplier quality",/supplier (quality|audit|qualification)/i,0],
+["Statistics or Six Sigma",/six sigma|minitab|statistic/i,0],
+["Design transfer",/design transfer/i,0]
+];
+function pills(a,c){return '<div class="pl '+c+'">'+a.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>'}
+function check(){
+var t=document.getElementById('jd').value,r=document.getElementById('res');
+if(t.trim().length<80){r.innerHTML='<p class="empty">Paste the full job description first. It needs at least a few sentences.</p>';return}
+var m=[],g=[];SK.forEach(function(s){if(s[1].test(t))(s[2]?m:g).push(s[0])});
+var tot=m.length+g.length;
+if(!tot){r.innerHTML='<p class="empty">No known skills found in this text. Check that you pasted the full description.</p>';return}
+var p=Math.round(100*m.length/tot),band=p>=70?'Strong match':p>=50?'Possible match':'Weak match';
+var cv='Europe/UK CV';
+if(/australia|new zealand|\bNZ\b|sydney|melbourne|auckland|perth|brisbane/i.test(t))cv='ANZ CV';else if(/\bindia\b|bengaluru|bangalore|hyderabad|chennai|pune/i.test(t))cv='India CV';
+var visa=/sponsor|relocation/i.test(t)?'Mentions sponsorship or relocation. Read the exact wording.':/right to work|eligible to work|work permit|work authori[sz]ation/i.test(t)?'Mentions work rights. Check whether you must already hold them.':'No visa wording found. Confirm before applying.';
+var lang=/(fluent|native|proficien\w*)[^.]{0,30}(german|swedish|dutch|finnish|polish|danish|norwegian|french|romanian|bulgarian|greek)|(german|swedish|dutch|finnish|polish|danish|norwegian|french|romanian|bulgarian|greek)[^.]{0,25}(required|mandatory|fluent)/i.test(t);
+var ys=(t.match(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)||[]).map(function(x){return parseInt(x,10)}),y=ys.length?Math.max.apply(null,ys):0;
+var h='<p class="score">'+p+'%</p><p class="band">'+band+'. This is the share of skills the posting names that are on your verified list. Use it as a guide, not a prediction.</p>';
+h+='<h3>Use this CV</h3><p class="flag">'+cv+'</p>';
+h+='<h3>Matches (put these exact terms near the top of your CV)</h3>'+(m.length?pills(m,''):'<p class="flag">None found.</p>');
+h+='<h3>Asked for, not on your verified list (add only if you have done it)</h3>'+(g.length?pills(g,'miss'):'<p class="flag">None found.</p>');
+h+='<h3>Checks</h3><p class="flag">Visa: '+esc(visa)+'</p>';
+if(lang)h+='<p class="flag">Language: this posting seems to require a local language. Your search filter is English only.</p>';
+if(y)h+='<p class="flag">Experience: the posting mentions up to '+y+'+ years. You have 6+ years in patient-specific implant design.</p>';
+h+='<h3>Summary line for your CV</h3><p class="sum">Product sustaining and design control engineer with 6+ years in patient-specific orthopaedic implants'+(m.length?', with hands-on experience in '+m.slice(0,5).map(function(x){return x}).join(', ')+'.':'.')+'</p>';
+r.innerHTML=h}
+document.getElementById('go').addEventListener('click',check);
+document.getElementById('clr').addEventListener('click',function(){document.getElementById('jd').value='';document.getElementById('res').innerHTML='<p class="empty">Your score, matched skills, gaps, the CV to use and a summary line appear here.</p>'});
+render();renderApps();
+</script>
+</body>
+</html>
