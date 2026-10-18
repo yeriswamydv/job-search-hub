@@ -59,6 +59,14 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:
 .sum{background:var(--acc2);border-radius:6px;padding:8px 10px;font-size:.92rem;margin:0}
 .row{flex-wrap:wrap}.row input{flex:1;min-width:130px}
 textarea.big{min-height:300px}
+header,.bar-in,main{max-width:1240px}
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:start}
+.rt{grid-column:2;grid-row:1;position:sticky;top:calc(66px + env(safe-area-inset-top,0px));max-height:calc(100vh - 84px);overflow-y:auto}
+.lf{grid-column:1;grid-row:1;min-width:0}
+.rt .ck{grid-template-columns:1fr}
+.rt textarea{min-height:150px}
+.rt textarea.big{min-height:220px}
+@media (max-width:980px){.lay{display:block}.rt{position:static;max-height:none;overflow:visible}}
 </style>
 </head>
 <body>
@@ -71,7 +79,8 @@ textarea.big{min-height:300px}
 <button id="reset" type="button">Clear today’s ticks</button>
 <button id="theme" type="button">Light/dark</button>
 </div></div>
-<main>
+<main class="lay">
+<div class="rt">
 <section id="checker"><h2>Match checker</h2><p class="sub">Paste a job description. It runs in your browser and nothing is sent anywhere.</p>
 <div class="ck"><div><textarea id="jd" placeholder="Paste the full job description here" aria-label="Job description"></textarea><div class="row"><button id="go" type="button">Check match</button><button id="clr" type="button">Clear</button></div></div>
 <div id="res" aria-live="polite"><p class="empty">Your score, matched skills, gaps, the CV to use and a summary line appear here.</p></div></div></section>
@@ -84,6 +93,8 @@ textarea.big{min-height:300px}
 <div class="row"><button id="cldraft" type="button">Draft letter from last match</button></div>
 <textarea id="cl" class="big" placeholder="Your cover letter appears here. You can edit it." aria-label="Cover letter text"></textarea>
 <div class="row"><button id="clpdf" type="button">Save as PDF</button><button id="cldoc" type="button">Save as Word</button></div></section>
+</div>
+<div class="lf">
 <div class="chips" id="chips"></div>
 <div id="list"></div>
 <section class="tracker" id="tracker">
@@ -98,7 +109,7 @@ textarea.big{min-height:300px}
 <div class="wrap" id="apps"></div>
 </section>
 <p class="note">Filters used: English-language roles, employers that sponsor visas, design control, sustaining and quality roles. Always confirm sponsorship in the job description before applying. Listings change daily, so check that a posting is still open.</p>
-</main>
+</div></main>
 <script>
 var KW="medical%20device%20design%20engineer";
 function li(c){return "https://www.linkedin.com/jobs/search/?keywords="+KW+"&location="+encodeURIComponent(c)+"&f_TPR=r604800"}
