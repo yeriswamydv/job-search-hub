@@ -57,6 +57,8 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:
 .pl.miss span{border:1px dashed var(--mute);color:var(--mute)}
 .flag{font-size:.9rem;margin:4px 0}
 .sum{background:var(--acc2);border-radius:6px;padding:8px 10px;font-size:.92rem;margin:0}
+.row{flex-wrap:wrap}.row input{flex:1;min-width:130px}
+textarea.big{min-height:300px}
 </style>
 </head>
 <body>
@@ -73,6 +75,15 @@ textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:
 <section id="checker"><h2>Match checker</h2><p class="sub">Paste a job description. It runs in your browser and nothing is sent anywhere.</p>
 <div class="ck"><div><textarea id="jd" placeholder="Paste the full job description here" aria-label="Job description"></textarea><div class="row"><button id="go" type="button">Check match</button><button id="clr" type="button">Clear</button></div></div>
 <div id="res" aria-live="polite"><p class="empty">Your score, matched skills, gaps, the CV to use and a summary line appear here.</p></div></div></section>
+<section id="cvbox"><h2>CV</h2><p class="sub">Paste your CV once, edit it here, then save it. Your text stays in this browser only. Downloads work on your own site, not in the claude.ai preview. Only add skills you have really used.</p>
+<textarea id="cv" class="big" placeholder="Paste your CV text here" aria-label="CV text"></textarea>
+<div class="row"><button id="cvadd" type="button">Add tailored summary from last match</button><button id="cvx" type="button">Clear CV</button></div>
+<div class="row"><button id="cvpdf" type="button">Save as PDF</button><button id="cvdoc" type="button">Save as Word</button></div></section>
+<section id="clbox"><h2>Cover letter</h2><p class="sub">Fill in the three fields, run the match checker on the job, then draft. Replace the bracketed line with a real example from your work.</p>
+<div class="row"><input type="text" id="nm" placeholder="Your name" aria-label="Your name"><input type="text" id="rl" placeholder="Role title" aria-label="Role title"><input type="text" id="cm" placeholder="Company" aria-label="Company"></div>
+<div class="row"><button id="cldraft" type="button">Draft letter from last match</button></div>
+<textarea id="cl" class="big" placeholder="Your cover letter appears here. You can edit it." aria-label="Cover letter text"></textarea>
+<div class="row"><button id="clpdf" type="button">Save as PDF</button><button id="cldoc" type="button">Save as Word</button></div></section>
 <div class="chips" id="chips"></div>
 <div id="list"></div>
 <section class="tracker" id="tracker">
@@ -100,18 +111,18 @@ var D=[
 ["Johnson & Johnson careers","https://www.careers.jnj.com/","Orthopaedics (DePuy Synthes) and MedTech.","Employer"],
 ["Abbott careers","https://www.jobs.abbott/us/en/","Search by country and function.","Employer"],
 ["Terumo BCT careers","https://careers.terumobct.com/","Medical device employer with several sites.","Employer"]]},
-{n:"Finland",l:[["Work in Finland","https://www.workinfinland.com/en/","Government-backed site with English-speaking jobs.","Official"]]},
-{n:"Netherlands",l:[["IND recognised sponsors","https://ind.nl/en/public-register-recognised-sponsors","Check an employer is on the register before applying.","Visa"]]},
-{n:"Norway",l:[]},
-{n:"Sweden",l:[]},
+{n:"Finland",l:[["Work in Finland","https://www.workinfinland.com/en/","Government-backed site with English-speaking jobs.","Official"],["EnglishJobs.fi, mechanical engineering","https://englishjobs.fi/jobs/mechanical_engineering","English-language jobs in Finland. Open each posting to check sponsorship.","Board"]]},
+{n:"Netherlands",l:[["EnglishJobSearch.nl","https://englishjobsearch.nl","English-language jobs in the Netherlands.","Board"],["IND recognised sponsors","https://ind.nl/en/public-register-recognised-sponsors","Check an employer is on the register before applying.","Visa"]]},
+{n:"Norway",l:[["EnglishJobs.no","https://englishjobs.no","English-language jobs in Norway.","Board"]]},
+{n:"Sweden",l:[["EnglishJobSearch.se","https://englishjobsearch.se","English-language jobs in Sweden.","Board"]]},
 {n:"Denmark",l:[["EnglishJobs.dk, visa sponsorship","https://englishjobs.dk/jobs/mechanical_engineering?tags=visa-sponsorship","English-language jobs with the visa-sponsorship tag.","Visa"]]},
-{n:"Austria",l:[]},
-{n:"Luxembourg",l:[]},
-{n:"Poland",l:[]},
+{n:"Austria",l:[["EnglishJobSearch.at","https://englishjobsearch.at","English-language jobs in Austria.","Board"]]},
+{n:"Luxembourg",l:[["EnglishJobs.lu","https://englishjobs.lu","English-language jobs in Luxembourg.","Board"]]},
+{n:"Poland",l:[["EnglishJobs.pl","https://englishjobs.pl","English-language jobs in Poland.","Board"]]},
 {n:"United Kingdom",l:[["UK licensed sponsor register","https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers","Only licensed employers can sponsor a skilled worker visa.","Visa"]]},
-{n:"Belgium",l:[]},
+{n:"Belgium",l:[["EnglishJobs.be","https://englishjobs.be","English-language jobs in Belgium.","Board"]]},
 {n:"Bulgaria",l:[]},
-{n:"Romania",l:[]},
+{n:"Romania",l:[["EnglishJobs.ro","https://englishjobs.ro","English-language jobs in Romania.","Board"]]},
 {n:"Greece",l:[]},
 {n:"Australia",l:[
 ["SEEK Australia","https://www.seek.com.au/medical-device-engineer-jobs","Biggest board. Look for sponsorship or visa wording.","Board"],
@@ -201,9 +212,26 @@ h+='<h3>Checks</h3><p class="flag">Visa: '+esc(visa)+'</p>';
 if(lang)h+='<p class="flag">Language: this posting seems to require a local language. Your search filter is English only.</p>';
 if(y)h+='<p class="flag">Experience: the posting mentions up to '+y+'+ years. You have 6+ years in patient-specific implant design.</p>';
 h+='<h3>Summary line for your CV</h3><p class="sum">Product sustaining and design control engineer with 6+ years in patient-specific orthopaedic implants'+(m.length?', with hands-on experience in '+m.slice(0,5).map(function(x){return x}).join(', ')+'.':'.')+'</p>';
-r.innerHTML=h}
+r.innerHTML=h;LAST={m:m}}
 document.getElementById('go').addEventListener('click',check);
 document.getElementById('clr').addEventListener('click',function(){document.getElementById('jd').value='';document.getElementById('res').innerHTML='<p class="empty">Your score, matched skills, gaps, the CV to use and a summary line appear here.</p>'});
+var LAST=null;
+function sumLine(m){return 'Product sustaining and design control engineer with 6+ years in patient-specific orthopaedic implants'+(m.length?', with hands-on experience in '+m.slice(0,5).join(', ')+'.':'.')}
+function val(id){return document.getElementById(id).value.trim()}
+function need(id){var t=val(id);if(!t){alert('Nothing to save yet. Write or paste some text first.');return null}return t}
+function printDoc(title,text){var w=window.open('','_blank');if(!w){alert('The pop-up was blocked. Allow pop-ups for this page and try again.');return}w.document.write('<!doctype html><meta charset="utf-8"><title>'+esc(title)+'</title><style>body{font:12pt/1.45 Georgia,serif;margin:2cm;white-space:pre-wrap}</style><body>'+esc(text)+'</body>');w.document.close();w.focus();setTimeout(function(){w.print()},300)}
+function saveDoc(name,text){var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+esc(name)+'</title></head><body style="font-family:Calibri,Arial,sans-serif;font-size:11pt">'+esc(text).replace(/\n/g,'<br>')+'</body></html>';var b=new Blob(['\ufeff',html],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name+'.doc';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(a.href)},1000)}
+var cvEl=document.getElementById('cv'),nmEl=document.getElementById('nm');
+cvEl.value=get('hub_cv','');nmEl.value=get('hub_name','');
+cvEl.addEventListener('input',function(){set('hub_cv',cvEl.value)});
+nmEl.addEventListener('input',function(){set('hub_name',nmEl.value)});
+document.getElementById('cvadd').addEventListener('click',function(){if(!LAST){alert('Run the match checker first, then add the summary.');return}var blk='SUMMARY\n'+sumLine(LAST.m)+'\nKEY SKILLS FOR THIS ROLE\n'+(LAST.m.join(', ')||'None matched')+'\n\n';cvEl.value=blk+cvEl.value.replace(/^SUMMARY\n[^\n]*\nKEY SKILLS FOR THIS ROLE\n[^\n]*\n\n/,'');set('hub_cv',cvEl.value)});
+document.getElementById('cvx').addEventListener('click',function(){if(confirm('Clear your CV text from this browser?')){cvEl.value='';set('hub_cv','')}});
+document.getElementById('cvpdf').addEventListener('click',function(){var t=need('cv');if(t)printDoc('CV',t)});
+document.getElementById('cvdoc').addEventListener('click',function(){var t=need('cv');if(t)saveDoc('CV',t)});
+document.getElementById('cldraft').addEventListener('click',function(){if(!LAST){alert('Run the match checker first so the letter can use the skills the job asks for.');return}var rl=val('rl')||'[Role title]',cm=val('cm')||'[Company]',nm=val('nm')||'[Your name]',sk=LAST.m.slice(0,6).join(', ');document.getElementById('cl').value='Dear Hiring Manager,\n\nI am applying for the '+rl+' position at '+cm+'. I am a product sustaining and design control engineer with 6+ years in patient-specific orthopaedic implant design, working under FDA and ISO 13485 requirements.\n\n'+(sk?'Your posting asks for '+sk+'. These match my hands-on experience, and I would bring them to your team.\n\n':'')+'[Add one or two real examples from your work that fit this role, such as a CAPA you led or a design change you managed.]\n\nI would welcome the chance to discuss how my background fits '+cm+'. Thank you for your time and consideration.\n\nKind regards,\n'+nm});
+document.getElementById('clpdf').addEventListener('click',function(){var t=need('cl');if(t)printDoc('Cover letter',t)});
+document.getElementById('cldoc').addEventListener('click',function(){var t=need('cl');if(t)saveDoc('Cover letter',t)});
 render();renderApps();
 </script>
 </body>
